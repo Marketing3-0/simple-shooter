@@ -43,13 +43,13 @@ function Game() {
 			MainCharacter.prototype.canvasWidth = this.mainCanvas.width;
 			MainCharacter.prototype.canvasHeight = this.mainCanvas.height;
 
-			Enemy_1.prototype.context = this.enemiesContext;
-			Enemy_1.prototype.canvasWidth = this.enemiesCanvas.width;
-			Enemy_1.prototype.canvasHeight = this.enemiesCanvas.height;
+			Enemy_A.prototype.context = this.enemiesContext;
+			Enemy_A.prototype.canvasWidth = this.enemiesCanvas.width;
+			Enemy_A.prototype.canvasHeight = this.enemiesCanvas.height;
 
-			Enemy_2.prototype.context = this.enemiesContext;
-			Enemy_2.prototype.canvasWidth = this.enemiesCanvas.width;
-			Enemy_2.prototype.canvasHeight = this.enemiesCanvas.height;
+			Enemy_B.prototype.context = this.enemiesContext;
+			Enemy_B.prototype.canvasWidth = this.enemiesCanvas.width;
+			Enemy_B.prototype.canvasHeight = this.enemiesCanvas.height;
 
 			Bullet.prototype.context = this.enemiesContext;
 			Bullet.prototype.canvasWidth = this.enemiesCanvas.width;
@@ -65,24 +65,24 @@ function Game() {
 			);
 
 			// create enemy_1
-			this.firstEnemy = new Enemy_1();
+			this.firstEnemy = new Enemy_A();
 			this.firstEnemy.init(
 				200,
 				this.enemiesCanvas.height-imgRepo.enemy_1.height,
 				imgRepo.enemy_1.width,
 				imgRepo.enemy_1.height
 			);
-			this.secondEnemy = new Enemy_1();
+			this.secondEnemy = new Enemy_A();
 			this.secondEnemy.init(
 				400,
 				this.enemiesCanvas.height-imgRepo.enemy_1.height,
 				imgRepo.enemy_1.width,
 				imgRepo.enemy_1.height
 			);
-			this.thirdEnemy = new Enemy_2();
+			this.thirdEnemy = new Enemy_B();
 			this.thirdEnemy.init(
 				600,
-				300,//this.enemiesCanvas.height-imgRepo.enemy_1.height,
+				this.enemiesCanvas.height,
 				imgRepo.enemy_2.width,
 				imgRepo.enemy_2.height
 			);
