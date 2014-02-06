@@ -24,17 +24,20 @@ function ImgRepo() {
 		}
 	}
 
-	this.bullet = createImage();
+	this.mainBullet = createImage();
+	this.enemyBullet = createImage();
 	this.main = createImage();
 	this.enemy_1 = createImage();
 	this.enemy_2 = createImage();
 
-	this.bullet.onload = function() { onImageLoad(); };
+	this.mainBullet.onload = function() { onImageLoad(); };
+	this.enemyBullet.onload = function() { onImageLoad(); };
 	this.main.onload = function() { onImageLoad(); };
 	this.enemy_1.onload = function() { onImageLoad(); };
 	this.enemy_2.onload = function() { onImageLoad(); };
 
-	this.bullet.src = "./img/bullet_main.png";
+	this.mainBullet.src = "./img/bullet_main.png";
+	this.enemyBullet.src = "./img/bullet_enemy.png";
 	this.main.src = "./img/main.png";
 	this.enemy_1.src = "./img/enemy_1.png";
 	this.enemy_2.src = "./img/enemy_2.png";

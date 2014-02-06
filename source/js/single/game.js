@@ -43,6 +43,10 @@ function Game() {
 			MainCharacter.prototype.canvasWidth = this.mainCanvas.width;
 			MainCharacter.prototype.canvasHeight = this.mainCanvas.height;
 
+			Bullet.prototype.context = this.enemiesContext;
+			Bullet.prototype.canvasWidth = this.enemiesCanvas.width;
+			Bullet.prototype.canvasHeight = this.enemiesCanvas.height;
+
 			this.mainCharacter = new MainCharacter();
 			this.mainCharacter.init(
 				10,
@@ -75,7 +79,10 @@ function animate () {
 	// the next available frame
 	requestAnimFrame( animate );
 
+	// react to keys pressed and draw the main character
 	game.mainCharacter.move();
+	// eventuallt draw the bullet fired by the main char.
+	game.mainCharacter.bulletPool.animate();
 }
 
 window.requestAnimFrame = (function(){
