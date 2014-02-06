@@ -56,15 +56,14 @@ module.exports = function(grunt) {
         curly: true, // put always curly braces around block
         eqeqeq: true, // == and != are not valid, use === and !== instead
         bitwise: true, // prohibits the use of bitwise operators
-        undef: true, // error when a variable is undefined
+        //undef: true, // error when a variable is undefined
         trailing: true, // warning when there are trailing whitespaces
         node:true, // defines globals available in the Node runtime environment
         devel:true, // defines globals used for debugging (console, alert..)
-        browser:true, // defines globals exposed by modern browsers (document, navigator, FileReader...)
-        jquery: true // defines globals exposed by jQuery lib
+        browser:true // defines globals exposed by modern browsers (document, navigator, FileReader...)
       },
 
-      scripts: './source/js/concat.js',
+      scripts: './source/js/single/*.js',
 
       gruntfile: 'Gruntfile.js'
     },
@@ -87,7 +86,7 @@ module.exports = function(grunt) {
 
       scripts: {
         files: './source/js/single/*.js',
-        tasks: ['concat', 'jshint:scripts', 'uglify']
+        tasks: ['jshint:scripts', 'concat', 'uglify']
       },
 
       html: {
@@ -107,6 +106,6 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-contrib-watch');
 
-  grunt.registerTask('build', ['sass', 'jshint:gruntfile', 'concat', 'jshint:scripts', 'uglify']);
+  grunt.registerTask('build', ['sass', 'jshint:gruntfile', 'jshint:scripts', 'concat', 'uglify']);
   grunt.registerTask('default', ['build', 'connect', 'watch']);
 };
