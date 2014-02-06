@@ -29,14 +29,14 @@ function Drawable() {
 -----------------------------------------------------*/
 function MainCharacter() {
 	
-	this.speed = {x: 3, y: 10};
+	this.speed = {x: 3, y: 8};
 	
 	// this.bulletPool = new Pool(30);
 	var fireRate = 15; //fire at least avery 15 frames
 	var fireCounter = 0;
 
 	var isJumping = false;
-	var jumpFrames = 10; // up for 10 frames, down for 10 frames
+	var jumpFrames = 15; // up for 10 frames, down for 10 frames
 	var jumpCounter = 0;
 
 	this.init = function(x,y,w,h) {
@@ -49,7 +49,7 @@ function MainCharacter() {
 	};
 
 	this.draw = function() {
-		this.context.drawImage(imageRepository.main, this.x, this.y);
+		this.context.drawImage(imgRepo.main, this.x, this.y);
 	};
 
 	this.move = function() {
@@ -57,7 +57,7 @@ function MainCharacter() {
 
 		// determine the action to perform based on the key pressed:
 		// moving or jumping
-		if (KEY_STATUS.left || KEY_STATUS.right || KEY_STATUS.up) {
+		if (KEY_STATUS.left || KEY_STATUS.right || KEY_STATUS.up || isJumping) {
 
 			// it moved -> clear the rectangle
 			this.context.clearRect(this.x, this.y, this.width, this.height);
@@ -74,12 +74,13 @@ function MainCharacter() {
 				}
 			}
 
-			if (KEY_STATUS.up && !this.isJumping) {
-				this.isJumping = true;
+			if (KEY_STATUS.up && !isJumping) {
+				isJumping = true;
 			}
-			if (this.isJumping) {
-				this.jump();
-			}
+		}
+
+		if (isJumping) {
+			this.jump();
 		}
 
 		// the position may have changed, time to redraw
@@ -97,15 +98,20 @@ function MainCharacter() {
 
 	this.jump = function() {
 		jumpCounter++;
+
 		if (jumpCounter === jumpFrames) {
 			this.speed.y = -this.speed.y;
 		}
 		if (jumpCounter === 2*jumpFrames) {
 			this.speed.y = -this.speed.y;
-			this.isJumping = false;
+			isJumping = false;
+			jumpCounter = 0;
 		}
 
 		this.y -= this.speed.y;
+		if (this.y > this.canvasHeight-10) {
+			this.y = this.canvasHeight-10;
+		}
 	};
 }
 

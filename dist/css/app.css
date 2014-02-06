@@ -1,1 +1,1 @@
-#canvas_container {border:1px solid black;width:640px;height:360px;}canvas {position:absolute;top:0;left:0;background:transparent;}#bg {z-index:-1;}#main {z-index:0;}#enemies {z-index:1;}
+#canvas_container {border:1px solid black;width:640px;height:360px;position:relative;}canvas {position:absolute;top:0;left:0;background:transparent;}#bg {z-index:-1;}#main {z-index:0;}#enemies {z-index:1;}#obstacles {z-index:2;}

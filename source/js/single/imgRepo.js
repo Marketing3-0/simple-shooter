@@ -15,9 +15,11 @@ function ImgRepo() {
 	}
 
 	function onImageLoad () {
+
 		numLoaded++;
 		// initialize the environment only when all the images are loaded
 		if (numLoaded === numImages){
+			console.log("all images loaded");
 			window.init();
 		}
 	}
