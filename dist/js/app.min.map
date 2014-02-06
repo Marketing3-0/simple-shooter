@@ -1,0 +1,1 @@
+{"version":3,"file":"app.min.js","sources":["../../source/js/concat.js"],"names":["Alerter","msg","this","message","prepend","appear","alert","window","onload","a"],"mappings":";;AAAA,QAASA,SAAQC,GAChBC,KAAKC,QAAUF,CAEf,IAAIG,GAAU,eAEdF,MAAKG,OAAS,WACbC,MAAMF,EAAUF,KAAKC,UAEtBI,OAAOC,OAAS,WAChB,GAAIC,GAAI,GAAIT,SAAQ,WACpBS,GAAEJ"}

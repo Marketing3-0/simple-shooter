@@ -1,0 +1,541 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+			[
+				"enemy",
+				"enemyBullet"
+			],
+			[
+				"colli",
+				"collidableWith"
+			],
+			[
+				"enemyBull",
+				"enemyBulletPool"
+			],
+			[
+				"bu",
+				"enemyBullet  (variable)"
+			],
+			[
+				"enem",
+				"enemyBullet"
+			],
+			[
+				"ship",
+				"shipCanvas  (variable)"
+			],
+			[
+				"pr",
+				"prototype"
+			],
+			[
+				"canva",
+				"canvasHeight"
+			],
+			[
+				"canvas",
+				"canvasHeight"
+			],
+			[
+				"ri",
+				"right"
+			],
+			[
+				"b",
+				"bullet  (variable)"
+			],
+			[
+				"image",
+				"imageRepository"
+			],
+			[
+				"num",
+				"numImages"
+			],
+			[
+				"g",
+				"g"
+			],
+			[
+				"can",
+				"canvasHeight"
+			],
+			[
+				"get",
+				"getElementById  (function)"
+			],
+			[
+				"sub",
+				"subParts"
+			],
+			[
+				"word",
+				"wordsLenght"
+			],
+			[
+				"algo",
+				"algoType"
+			],
+			[
+				"form",
+				"formatType"
+			],
+			[
+				"wor",
+				"wordsLenght"
+			],
+			[
+				"fas",
+				"fastSolution"
+			],
+			[
+				"inp",
+				"inputDictionary"
+			],
+			[
+				"solu",
+				"solutions"
+			],
+			[
+				"te",
+				"textContent"
+			],
+			[
+				"le",
+				"length"
+			],
+			[
+				"for",
+				"for	for (…) {…}"
+			],
+			[
+				"res",
+				"resultElement"
+			],
+			[
+				"result",
+				"resultDisplay"
+			],
+			[
+				"file",
+				"fileInput"
+			],
+			[
+				"read",
+				"readTextFile"
+			],
+			[
+				"sc",
+				"scrollPage"
+			],
+			[
+				"pad",
+				"padding"
+			],
+			[
+				"query",
+				"querySelectorAll"
+			],
+			[
+				"details",
+				"details_descr"
+			],
+			[
+				"mt",
+				"margin-top"
+			],
+			[
+				"margin",
+				"margin-top"
+			],
+			[
+				"max-",
+				"max-width"
+			],
+			[
+				"font-s",
+				"font-size"
+			],
+			[
+				"margi",
+				"margin-top"
+			],
+			[
+				"menu",
+				"menu_toggle"
+			],
+			[
+				"nav",
+				"navbar-height-minified"
+			],
+			[
+				"marin",
+				"margin-left"
+			],
+			[
+				"links",
+				"links_sub"
+			],
+			[
+				"d",
+				"d:ib	display:inline-block"
+			],
+			[
+				"fl",
+				"fl:n	float:none"
+			],
+			[
+				"inlin",
+				"inline-block"
+			],
+			[
+				"border",
+				"border-radius"
+			],
+			[
+				"tra",
+				"transition"
+			],
+			[
+				"trans",
+				"transition"
+			],
+			[
+				"lis",
+				"lis:n	list-style:none"
+			],
+			[
+				"tex",
+				"text-decoration"
+			],
+			[
+				"padd",
+				"padding-right"
+			],
+			[
+				"paddin",
+				"padding-top"
+			],
+			[
+				"font",
+				"font-size"
+			],
+			[
+				"max",
+				"max-width"
+			],
+			[
+				"padding",
+				"padding-bottom"
+			],
+			[
+				"im",
+				"imagemin"
+			],
+			[
+				"img",
+				"img_uncompressed"
+			],
+			[
+				"wid",
+				"width"
+			],
+			[
+				"color",
+				"color-darkblue"
+			],
+			[
+				"grunt",
+				"gruntfile"
+			],
+			[
+				"css",
+				"csslint"
+			]
+		]
+	},
+	"buffers":
+	[
+		{
+			"file": "dist/index.html",
+			"settings":
+			{
+				"buffer_size": 352,
+				"line_ending": "Unix"
+			}
+		}
+	],
+	"build_system": "",
+	"command_palette":
+	{
+		"height": 169.0,
+		"selected_items":
+		[
+			[
+				"packa",
+				"Package Control: List Packages"
+			],
+			[
+				"sass",
+				"Set Syntax: Sass"
+			],
+			[
+				"insta",
+				"Package Control: Install Package"
+			],
+			[
+				"install",
+				"Package Control: Install Package"
+			],
+			[
+				"html",
+				"HTML: Encode Special Characters"
+			]
+		],
+		"width": 574.0
+	},
+	"console":
+	{
+		"height": 126.0,
+		"history":
+		[
+			"import urllib.request,os,hashlib; h = '7183a2d3e96f11eeadd761d777e62404e330c659d4bb41d3bdf022e94cab3cd0'; pf = 'Package Control.sublime-package'; ipp = sublime.installed_packages_path(); urllib.request.install_opener( urllib.request.build_opener( urllib.request.ProxyHandler()) ); by = urllib.request.urlopen( 'http://sublime.wbond.net/' + pf.replace(' ', '%20')).read(); dh = hashlib.sha256(by).hexdigest(); print('Error validating download (got %s instead of %s), please try manual install' % (dh, h)) if dh != h else open(os.path.join( ipp, pf), 'wb' ).write(by)"
+		]
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"file_history":
+	[
+		"/Users/marco/Documents/Jobs/2014/20140131_Unit9/Challenge/game_alt.js",
+		"/Users/marco/Documents/Jobs/2014/20140131_Unit9/Challenge/game.js",
+		"/Users/marco/Library/Application Support/Sublime Text 3/Packages/User/Snippets/commentBig",
+		"/Users/marco/Documents/Jobs/2014/20140131_Unit9/Challenge/game.html",
+		"/Users/marco/Documents/Jobs/2014/20140117_Mint/Challenge/algorithms.js",
+		"/Users/marco/Desktop/game.html",
+		"/Users/marco/Documents/Jobs/2014/20140117_Mint/Challenge/run.html",
+		"/Users/marco/Documents/Jobs/2014/20140117_Mint/Challenge/Readable.js",
+		"/Users/marco/Documents/Jobs/2014/20140117_Mint/Challenge/untitled",
+		"/Users/marco/Documents/Website/ProvaFoundation/index.html",
+		"/Users/marco/Documents/Website/ProvaFoundation/scss/content.scss",
+		"/Users/marco/Documents/Website/ProvaFoundation/js_prd/single/showDetails.js",
+		"/private/var/folders/sn/v4vjlrf57fx22mbpsl3tnhvm0000gn/T/1b236560-a446-44eb-8f41-59c879bdce2e/index.html",
+		"/Users/marco/Documents/Website/ProvaFoundation/js_prd/single/topBar.js",
+		"/Users/marco/Documents/Website/ProvaFoundation/js_prd/single/setup.js",
+		"/Users/marco/Documents/Website/ProvaFoundation/scss/app.scss",
+		"/Users/marco/Documents/Website/ProvaFoundation/scss/header.scss",
+		"/Users/marco/Documents/Website/ProvaFoundation/humans.txt",
+		"/Users/marco/Documents/Website/ProvaFoundation/Gruntfile.js",
+		"/Users/marco/Documents/Website/ProvaFoundation/bower_components/foundation/js/foundation.js",
+		"/Users/marco/Documents/Website/ProvaFoundation/bower_components/foundation/js/foundation/foundation.orbit.js",
+		"/Users/marco/Documents/Website/ProvaFoundation/bower_components/foundation/js/foundation.min.js",
+		"/Users/marco/Documents/Website/ProvaFoundation/scss/media_queries.scss",
+		"/Users/marco/Documents/Website/ProvaFoundation/scss/content",
+		"/Users/marco/Documents/Website/ProvaFoundation/scss/custom.scss",
+		"/Users/marco/Documents/Website/ProvaFoundation/package.json",
+		"/Users/marco/Documents/Website/ProvaFoundation/scss/_settings.scss",
+		"/Users/marco/Documents/PROVA/package.json",
+		"/Users/marco/Documents/PROVA/bower.json",
+		"/Users/marco/Documents/PROVA/Gruntfile.js",
+		"/Users/marco/Documents/PROVA/scss/_settings.scss",
+		"/Users/marco/Library/Application Support/Sublime Text 3/Packages/User/Preferences.sublime-settings"
+	],
+	"find":
+	{
+		"height": 25.0
+	},
+	"find_in_files":
+	{
+		"height": 0.0,
+		"where_history":
+		[
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": false,
+		"find_history":
+		[
+			"imgs",
+			"gameO",
+			"detectColli",
+			"Bullet",
+			"bg",
+			"Background",
+			"bg",
+			"\n			Ship.prototype.context = this.",
+			"Background",
+			"bg",
+			"this.bgContext",
+			"bg",
+			"= ",
+			"subParts",
+			"typeOfSolution",
+			"p>",
+			"findComposedWords",
+			"innerText",
+			"secondPart",
+			"firstPart",
+			"resultElement",
+			"radius",
+			"3s",
+			".5s",
+			"3s",
+			"hide",
+			"border",
+			"e.preven",
+			"self.link_custom",
+			"data-orbit-link",
+			"images",
+			"8px",
+			"data-orb",
+			"\"",
+			"<div class=\"orbit-caption\">",
+			"#696868",
+			"href=\"#",
+			"logo",
+			"=\"#",
+			"in",
+			"js",
+			"//"
+		],
+		"highlight": true,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": false,
+		"replace_history":
+		[
+		],
+		"reverse": false,
+		"show_context": true,
+		"use_buffer2": true,
+		"whole_word": false,
+		"wrap": true
+	},
+	"groups":
+	[
+		{
+			"selected": 0,
+			"sheets":
+			[
+				{
+					"buffer": 0,
+					"file": "dist/index.html",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 352,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/HTML/HTML.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
+					"type": "text"
+				}
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 25.0
+	},
+	"input":
+	{
+		"height": 0.0
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			]
+		],
+		"cols":
+		[
+			0.0,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			1.0
+		]
+	},
+	"menu_visible": true,
+	"output.find_results":
+	{
+		"height": 0.0
+	},
+	"project": "simple-shooter.sublime-project",
+	"replace":
+	{
+		"height": 46.0
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 0.0,
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_symbol":
+	{
+		"height": 0.0,
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"settings":
+	{
+	},
+	"show_minimap": true,
+	"show_open_files": false,
+	"show_tabs": true,
+	"side_bar_visible": true,
+	"side_bar_width": 251.0,
+	"status_bar_visible": true,
+	"template_settings":
+	{
+		"max_columns": 2
+	}
+}
