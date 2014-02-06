@@ -4,7 +4,7 @@ function Alerter(msg) {
 	var prepend = "You told me: ";
 
 	this.appear = function() {
-		alert(prepend + this.message);
+		console.log(prepend + this.message);
 	};
 }window.onload = function() {
 	var a = new Alerter("JS works");
