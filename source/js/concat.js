@@ -29,10 +29,10 @@ function Drawable() {
 -----------------------------------------------------*/
 function MainCharacter() {
 	
-	this.speed = {x: 3, y: 8};
+	this.speed = {x: 3, y: 5};
 	
 	this.bulletPool = new BulletPool(30);
-	var fireRate = 15; //fire at least avery 15 frames
+	var fireRate = 15; //fire at least every 15 frames
 	var fireCounter = 0;
 
 	var isJumping = false;
@@ -97,7 +97,8 @@ function MainCharacter() {
 
 	this.fire = function() {
 		var bulletSpeed = this.facingLeft ? -5 : 5;
-		this.bulletPool.shoot(this.x+6, this.y+6, bulletSpeed);
+		var bulletStartingX = this.facingLeft ? this.x-imgRepo.mainBullet.width : this.x+this.width;
+		this.bulletPool.shoot(bulletStartingX, this.y+6, bulletSpeed);
 
 	};
 
@@ -120,6 +121,155 @@ function MainCharacter() {
 	};
 }
 MainCharacter.prototype = new Drawable();
+
+/*-----------------------------------------------------
+	Enemy, first type
+
+	Moves left and right and shoots
+-----------------------------------------------------*/
+function Enemy_1() {
+	
+	var fireRate = 120; //fire at least every 15 frames
+	var fireCounter = 0;
+	// this.collidableWith = "bullet";
+	// this.type = "enemy";
+	
+	// initialize enemy
+	this.init = function(x, y, width, height) {
+		this.x = x;
+		this.y = y;
+		this.width = width;
+		this.height = height;
+
+		this.speed = {x:2, y:0};
+
+		this.alive = true;
+
+		this.facingLeft = false; // shoot direction
+
+		this.limit = {
+			left: this.x - 45,
+			right: this.x + 45
+		};
+	};
+
+	// the enemy constantly moves
+	this.draw = function() {
+
+		fireCounter = fireCounter + Math.floor(Math.random()*5);
+
+		// clear the previous frame pixels
+		this.context.clearRect(this.x-1, this.y, this.width+1, this.height);
+		
+		this.x += this.speed.x;
+		this.y += this.speed.y;
+
+		// change direction when it reaches its left/right limit
+		if (this.x <= this.limit.left) {
+			this.facingLeft = false;
+			this.speed.x = -this.speed.x;
+		}
+		else if (this.x >= this.limit.right + this.width) {
+			this.facingLeft = true;
+			this.speed.x = -this.speed.x;
+		}
+		
+		//if (!this.isColliding) {
+			this.context.drawImage(imgRepo.enemy_1, this.x, this.y);
+		
+			
+			if (fireCounter >= fireRate) {
+				fireCounter = 0;
+				this.fire();
+			}
+			
+			return false;
+		//} else {
+		//game.playerScore += 10;
+		//game.explosion.get();
+		//return true;
+		//}
+	};
+	
+	// shoots a bullet
+	this.fire = function() {
+		var bulletSpeed = this.facingLeft ? -4 : 4;
+		var bulletStartingX = this.facingLeft ? this.x-imgRepo.enemyBullet.width : this.x+this.width;
+		game.enemyBulletPool.shoot(bulletStartingX, this.y+this.height/2, bulletSpeed);
+
+	};
+}
+Enemy_1.prototype = new Drawable();
+
+/*-----------------------------------------------------
+	Enemy, second type
+
+	Moves left and right and shoots
+-----------------------------------------------------*/
+function Enemy_2() {
+	
+	// this.collidableWith = "bullet";
+	// this.type = "enemy";
+	
+	// initialize enemy
+	this.init = function(x, y, width, height) {
+		this.x = x;
+		this.y = y;
+		this.width = width;
+		this.height = height;
+
+		this.speed = {x:0, y:1};
+
+		this.alive = true;
+
+		this.facingLeft = false; // shoot direction
+
+		this.limit = {
+			up: this.y - this.height*0.5,
+			down: this.y + this.height*0.5
+		};
+	};
+
+	// the enemy constantly moves
+	this.draw = function() {
+
+		// clear the previous frame pixels
+		this.context.clearRect(this.x-1, this.y, this.width+1, this.height);
+		
+		this.x += this.speed.x;
+		this.y += this.speed.y;
+
+		// change direction when it reaches its up/down limit
+		if (this.y <= this.limit.up) {
+			//when it touches the upper limit, switch left/right and fire
+			this.facingLeft = !this.facingLeft;
+			this.speed.y = -this.speed.y;
+			this.fire();
+		}
+		else if (this.y >= this.limit.down + this.height) {
+			this.speed.y = -this.speed.y;
+		}
+		
+		//if (!this.isColliding) {
+			this.context.drawImage(imgRepo.enemy_2, this.x, this.y);
+			
+			return false;
+		//} else {
+		//game.playerScore += 10;
+		//game.explosion.get();
+		//return true;
+		//}
+	};
+	
+	// shoots a bullet
+	this.fire = function() {
+		var bulletSpeed = this.facingLeft ? -4 : 4;
+		var bulletStartingX = this.facingLeft ? this.x-imgRepo.enemyBullet.width : this.x+this.width;
+		game.enemyBulletPool.shoot(bulletStartingX, this.y+this.height/2, bulletSpeed);
+
+	};
+}
+Enemy_1.prototype = new Drawable();
 
 
 /*-----------------------------------------------------
@@ -226,10 +376,19 @@ function Game() {
 			MainCharacter.prototype.canvasWidth = this.mainCanvas.width;
 			MainCharacter.prototype.canvasHeight = this.mainCanvas.height;
 
+			Enemy_1.prototype.context = this.enemiesContext;
+			Enemy_1.prototype.canvasWidth = this.enemiesCanvas.width;
+			Enemy_1.prototype.canvasHeight = this.enemiesCanvas.height;
+
+			Enemy_2.prototype.context = this.enemiesContext;
+			Enemy_2.prototype.canvasWidth = this.enemiesCanvas.width;
+			Enemy_2.prototype.canvasHeight = this.enemiesCanvas.height;
+
 			Bullet.prototype.context = this.enemiesContext;
 			Bullet.prototype.canvasWidth = this.enemiesCanvas.width;
 			Bullet.prototype.canvasHeight = this.enemiesCanvas.height;
 
+			// create main character
 			this.mainCharacter = new MainCharacter();
 			this.mainCharacter.init(
 				10,
@@ -237,6 +396,35 @@ function Game() {
 				imgRepo.main.width,
 				imgRepo.main.height
 			);
+
+			// create enemy_1
+			this.firstEnemy = new Enemy_1();
+			this.firstEnemy.init(
+				200,
+				this.enemiesCanvas.height-imgRepo.enemy_1.height,
+				imgRepo.enemy_1.width,
+				imgRepo.enemy_1.height
+			);
+			this.secondEnemy = new Enemy_1();
+			this.secondEnemy.init(
+				400,
+				this.enemiesCanvas.height-imgRepo.enemy_1.height,
+				imgRepo.enemy_1.width,
+				imgRepo.enemy_1.height
+			);
+			this.thirdEnemy = new Enemy_2();
+			this.thirdEnemy.init(
+				600,
+				300,//this.enemiesCanvas.height-imgRepo.enemy_1.height,
+				imgRepo.enemy_2.width,
+				imgRepo.enemy_2.height
+			);
+
+			// create pool of bullets for the enemies
+			// (the bullets remain on screen even if
+			// enemies get killed)
+			this.enemyBulletPool = new BulletPool(40);
+			this.enemyBulletPool.init("enemyBullet");
 
 			return true;
 
@@ -264,8 +452,16 @@ function animate () {
 
 	// react to keys pressed and draw the main character
 	game.mainCharacter.move();
-	// eventuallt draw the bullet fired by the main char.
+	// eventually draw the bullets fired by the main char.
 	game.mainCharacter.bulletPool.animate();
+
+	// move enemies
+	game.firstEnemy.draw();
+	game.secondEnemy.draw();
+	game.thirdEnemy.draw();
+
+	// eventually draw the bullets fired by the enemies
+	game.enemyBulletPool.animate();
 }
 
 window.requestAnimFrame = (function(){

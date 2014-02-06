@@ -43,10 +43,19 @@ function Game() {
 			MainCharacter.prototype.canvasWidth = this.mainCanvas.width;
 			MainCharacter.prototype.canvasHeight = this.mainCanvas.height;
 
+			Enemy_1.prototype.context = this.enemiesContext;
+			Enemy_1.prototype.canvasWidth = this.enemiesCanvas.width;
+			Enemy_1.prototype.canvasHeight = this.enemiesCanvas.height;
+
+			Enemy_2.prototype.context = this.enemiesContext;
+			Enemy_2.prototype.canvasWidth = this.enemiesCanvas.width;
+			Enemy_2.prototype.canvasHeight = this.enemiesCanvas.height;
+
 			Bullet.prototype.context = this.enemiesContext;
 			Bullet.prototype.canvasWidth = this.enemiesCanvas.width;
 			Bullet.prototype.canvasHeight = this.enemiesCanvas.height;
 
+			// create main character
 			this.mainCharacter = new MainCharacter();
 			this.mainCharacter.init(
 				10,
@@ -54,6 +63,35 @@ function Game() {
 				imgRepo.main.width,
 				imgRepo.main.height
 			);
+
+			// create enemy_1
+			this.firstEnemy = new Enemy_1();
+			this.firstEnemy.init(
+				200,
+				this.enemiesCanvas.height-imgRepo.enemy_1.height,
+				imgRepo.enemy_1.width,
+				imgRepo.enemy_1.height
+			);
+			this.secondEnemy = new Enemy_1();
+			this.secondEnemy.init(
+				400,
+				this.enemiesCanvas.height-imgRepo.enemy_1.height,
+				imgRepo.enemy_1.width,
+				imgRepo.enemy_1.height
+			);
+			this.thirdEnemy = new Enemy_2();
+			this.thirdEnemy.init(
+				600,
+				300,//this.enemiesCanvas.height-imgRepo.enemy_1.height,
+				imgRepo.enemy_2.width,
+				imgRepo.enemy_2.height
+			);
+
+			// create pool of bullets for the enemies
+			// (the bullets remain on screen even if
+			// enemies get killed)
+			this.enemyBulletPool = new BulletPool(40);
+			this.enemyBulletPool.init("enemyBullet");
 
 			return true;
 
@@ -81,8 +119,16 @@ function animate () {
 
 	// react to keys pressed and draw the main character
 	game.mainCharacter.move();
-	// eventuallt draw the bullet fired by the main char.
+	// eventually draw the bullets fired by the main char.
 	game.mainCharacter.bulletPool.animate();
+
+	// move enemies
+	game.firstEnemy.draw();
+	game.secondEnemy.draw();
+	game.thirdEnemy.draw();
+
+	// eventually draw the bullets fired by the enemies
+	game.enemyBulletPool.animate();
 }
 
 window.requestAnimFrame = (function(){
