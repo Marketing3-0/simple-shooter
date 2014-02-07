@@ -87,6 +87,11 @@ function Player() {
 			this.speed.y = 0;
 		}
 
+		if (this.y <= 0) {
+			this.speed.y = 5;
+			this.y = 0;
+		}
+
 		this.y += this.speed.y;
 
 		// determine the action to perform based on the key pressed:
@@ -145,7 +150,7 @@ function Player() {
 
 		jumpCounter = (jumpCounter+1) % (jumpFrames+1);
 
-		if (jumpCounter === jumpFrames) {
+		if (jumpCounter >= jumpFrames) {
 			this.speed.y = -this.speed.y;
 			this.isJumping = false;
 			jumpCounter = 0;

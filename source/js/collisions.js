@@ -70,9 +70,12 @@ function collisionDetection() {
 	// the player changes is no more touching the top of an obstacle,
 
 	if (playerCanGoDown === game.obstacles.length) {
+
 		if (game.player.floorHeight !== game.player.canvasHeight) {
-			game.player.speed.y = 5;
+
+			game.player.isTouchingTheFloor = false;
 			game.player.floorHeight = game.player.canvasHeight;
+			game.player.speed.y = 5;
 		}
 	}
 

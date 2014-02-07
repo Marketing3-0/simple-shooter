@@ -67,7 +67,7 @@ function Game() {
 			this.player = new Player();
 			this.player.init(
 				10,
-				this.mainCanvas.height-imgRepo.main.height-200,
+				20,
 				imgRepo.main.width,
 				imgRepo.main.height
 			);
