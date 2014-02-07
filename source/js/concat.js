@@ -25,6 +25,12 @@ function collisionDetection() {
 		}
 	}
 
+	for (i=0; i<game.enemies.length; i++) {
+		if (intersection(game.player, game.enemies[i])) {
+			game.player.alive = false;
+		}
+	}
+
 	// the player changes is no more touching the top of an obstacle,
 
 	if (playerCanGoDown === game.obstacles.length) {
@@ -647,22 +653,27 @@ function Game() {
 function animate () {
 	// recursively call this method for
 	// the next available frame
-	requestAnimFrame( animate );
+	
+	if (game.player.alive) {
+		requestAnimFrame( animate );
 
-	// react to keys pressed and draw the main character
-	game.player.move();
-	// eventually draw the bullets fired by the main char.
-	game.player.bulletPool.animate();
+		// react to keys pressed and draw the main character
+		game.player.move();
+		// eventually draw the bullets fired by the main char.
+		game.player.bulletPool.animate();
 
-	// move enemies
-	for (var i=0; i<game.enemies.length; i++) {
-		game.enemies[i].draw();
+		// move enemies
+		for (var i=0; i<game.enemies.length; i++) {
+			game.enemies[i].draw();
+		}
+
+		// eventually draw the bullets fired by the enemies
+		game.enemyBulletPool.animate();
+
+		collisionDetection();
+	} else {
+		document.getElementById("gameOver").style.display = "block";
 	}
-
-	// eventually draw the bullets fired by the enemies
-	game.enemyBulletPool.animate();
-
-	collisionDetection();
 }
 
 window.requestAnimFrame = (function(){

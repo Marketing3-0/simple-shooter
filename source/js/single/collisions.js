@@ -25,6 +25,12 @@ function collisionDetection() {
 		}
 	}
 
+	for (i=0; i<game.enemies.length; i++) {
+		if (intersection(game.player, game.enemies[i])) {
+			game.player.alive = false;
+		}
+	}
+
 	// the player changes is no more touching the top of an obstacle,
 
 	if (playerCanGoDown === game.obstacles.length) {
