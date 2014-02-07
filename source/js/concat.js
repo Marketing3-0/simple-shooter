@@ -1,3 +1,97 @@
+function collisionDetection() {
+
+	var i;
+	var playerCanGoDown = 0;
+
+	// check the obstacles:
+	for (i=0; i<game.obstacles.length; i++) {
+		if (intersection(game.player, game.obstacles[i])) {
+
+			//game.player.context.clearRect(
+			//	game.player.x,
+			//	game.player.y,
+			//	game.player.width,
+			//	game.player.height
+			//);
+			touchingObstacle(game.player, game.obstacles[i]);
+
+		} else {
+
+			if (game.player.x > game.obstacles[i].x + game.obstacles[i].width ||
+				game.player.x + game.player.width < game.obstacles[i].x) {
+				
+				playerCanGoDown++;
+			}
+		}
+	}
+
+	// the player changes is no more touching the top of an obstacle,
+
+	if (playerCanGoDown === game.obstacles.length) {
+		if (game.player.floorHeight !== game.player.canvasHeight) {
+			game.player.speed.y = 5;
+			game.player.floorHeight = game.player.canvasHeight;
+		}
+	}
+
+
+}
+
+function intersection(rectA, rectB) {
+	return !(
+		rectA.x + rectA.width < rectB.x		||
+		rectB.x + rectB.width < rectA.x		||
+		rectA.y + rectA.height < rectB.y	||
+		rectB.y + rectB.height < rectA.y
+	);
+}
+
+// what happend when something touched an obstacle
+function touchingObstacle(entity, obstacle) {
+
+	// if a player or an enemy, it can't go farther
+	if (entity.type === DRAWABLE_TYPES.player ||
+		entity.type === DRAWABLE_TYPES.enemy) {
+
+		
+		if (entity.previousPosition.y + entity.height < obstacle.y) {
+
+			//entity above the obstacle
+
+			if (entity.type === DRAWABLE_TYPES.player) {
+				entity.floorHeight = obstacle.y-1;
+				entity.speed.y = 0;
+				entity.isTouchingTheFloor = true;
+			}
+
+		} else if (entity.previousPosition.y + entity.height >= obstacle.y) {
+	
+			//entity on one side (left/right) of the obstacle
+
+			if (entity.x + entity.width + entity.speed.x >= obstacle.x &&
+				entity.x + entity.width + entity.speed.x < obstacle.x + obstacle.width) {
+
+				// entity to the left of the obstacle
+				entity.x = obstacle.x - entity.width - entity.speed.x;
+
+			} else if (entity.x < obstacle.x + obstacle.width + entity.speed.x) {
+
+				// entity to the right of the obstacle
+				entity.x = obstacle.x + obstacle.width + entity.speed.x;
+			}
+		
+		}
+	}
+}var DRAWABLE_TYPES = {
+	drawable:"drawable",
+	obstacle:"obstacle",
+	player: "player",
+	enemy: "enemy",
+	bullet: "bullet",
+	enemyBullet: "enemyBullet"
+};
+
+
 /*-----------------------------------------------------
 	Base Drawable class
 
@@ -11,8 +105,10 @@ function Drawable() {
 		this.y = y;
 		this.width = width;
 		this.height = height;
+		this.previousPosition = {x: this.x, y:this.y};
 	};
 	
+	this.type = DRAWABLE_TYPES.drawable;
 	this.speed = 0; //speed and direction of the movement
 	this.canvasWidth = 0;
 	this.canvasHeight = 0;
@@ -23,11 +119,13 @@ function Drawable() {
 }
 
 /*-----------------------------------------------------
-	Main Character element (the user)
+	Player element (the user)
 
 	Can move, jump and shoot
 -----------------------------------------------------*/
-function MainCharacter() {
+function Player() {
+
+	this.type = DRAWABLE_TYPES.player;
 	
 	this.speed = {x: 3, y: 5};
 	
@@ -35,7 +133,12 @@ function MainCharacter() {
 	var fireRate = 15; //fire at least every 15 frames
 	var fireCounter = 0;
 
-	var isJumping = false;
+
+	this.isTouchingTheFloor = false;
+
+	this.floorHeight = null;
+
+	this.isJumping = false;
 	var jumpFrames = 15; // up for 10 frames, down for 10 frames
 	var jumpCounter = 0;
 
@@ -45,7 +148,7 @@ function MainCharacter() {
 		this.width = w;
 		this.height = h;
 		this.alive = true;
-		this.bulletPool.init("bullet");
+		this.bulletPool.init(DRAWABLE_TYPES.bullet);
 		this.facingLeft = false; // shoot direction
 	};
 
@@ -55,13 +158,29 @@ function MainCharacter() {
 
 	this.move = function() {
 		fireCounter++;
+		this.previousPosition = {x: this.x, y:this.y};
+
+		// clear the rect around the player
+		var clearPadding = 50;
+		this.context.clearRect(this.x-clearPadding, this.y-clearPadding, this.width+(2*clearPadding), this.height+(2*clearPadding));
+
+		// check 
+		if (!this.floorHeight) {
+			this.floorHeight = this.canvasHeight;
+		}
+		if (this.y + this.height > this.floorHeight) {
+			this.y = this.floorHeight - this.height;
+			this.isTouchingTheFloor = true;
+			this.speed.y = 0;
+		}
+
+		this.y += this.speed.y;
 
 		// determine the action to perform based on the key pressed:
 		// moving or jumping
-		if (KEY_STATUS.left || KEY_STATUS.right || KEY_STATUS.up || isJumping) {
+		if (KEY_STATUS.left || KEY_STATUS.right || KEY_STATUS.up || this.isJumping) {
 
 			// it moved -> clear the rectangle
-			this.context.clearRect(this.x, this.y, this.width, this.height);
 
 			if (KEY_STATUS.left) {
 				this.facingLeft = true;
@@ -77,12 +196,17 @@ function MainCharacter() {
 				}
 			}
 
-			if (KEY_STATUS.up && !isJumping) {
-				isJumping = true;
+
+			if (KEY_STATUS.up && this.isTouchingTheFloor) {
+
+				this.speed.y = -5;
+				this.y += this.speed.y;
+				this.isJumping = true;
+				this.isTouchingTheFloor = false;
 			}
 		}
 
-		if (isJumping) {
+		if (this.isJumping) {
 			this.jump();
 		}
 
@@ -102,25 +226,20 @@ function MainCharacter() {
 
 	};
 
+	// jump up for jumpFrames frames and then fall fown until
+	// it reaches a limit (the ground)
 	this.jump = function() {
+
 		jumpCounter++;
 
 		if (jumpCounter === jumpFrames) {
 			this.speed.y = -this.speed.y;
-		}
-		if (jumpCounter === 2*jumpFrames) {
-			this.speed.y = -this.speed.y;
-			isJumping = false;
+			this.isJumping = false;
 			jumpCounter = 0;
-		}
-
-		this.y -= this.speed.y;
-		if (this.y > this.canvasHeight-10) {
-			this.y = this.canvasHeight-10;
 		}
 	};
 }
-MainCharacter.prototype = new Drawable();
+Player.prototype = new Drawable();
 
 
 /*-----------------------------------------------------
@@ -130,6 +249,8 @@ MainCharacter.prototype = new Drawable();
 	is defined in the subclasses
 -----------------------------------------------------*/
 function Enemy() {
+
+	this.type = DRAWABLE_TYPES.enemy;
 
 	// initialize enemy
 	this.init = function(x, y, width, height) {
@@ -285,7 +406,7 @@ function Bullet(object) {
 	
 	// can be "bullet" or "enemyBullet"
 	// (see Pool class)
-	var typeOfBullet = object;
+	this.type = object;
 
 	// re-initialize a bullet and make it alive
 	this.spawn = function(x, y, speed) {
@@ -311,10 +432,10 @@ function Bullet(object) {
 			return true;
 		
 		} else {
-			if (typeOfBullet === "bullet") {
+			if (this.type === DRAWABLE_TYPES.bullet) {
 				this.context.drawImage(imgRepo.mainBullet, this.x, this.y);
 			}
-			else if (typeOfBullet === "enemyBullet") {
+			else if (this.type === DRAWABLE_TYPES.enemyBullet) {
 				this.context.drawImage(imgRepo.enemyBullet, this.x, this.y);
 			}
 			
@@ -331,7 +452,44 @@ function Bullet(object) {
 		// this.isColliding = false;
 	};
 }
-Bullet.prototype = new Drawable();/*-----------------------------------------------------
+Bullet.prototype = new Drawable();
+
+/*-----------------------------------------------------
+	Obstacle element (abstract)
+-----------------------------------------------------*/
+function Obstacle(object) {
+
+	this.type = DRAWABLE_TYPES.obstacle;
+	
+	// drawn only once, at creation time
+	this.draw = function() {
+		this.context.drawImage(this.image(), this.x, this.y);
+	};
+
+	//to be overridden
+	this.image = function() { };
+}
+Obstacle.prototype = new Drawable();
+
+/*-----------------------------------------------------
+	Obstacle type A
+-----------------------------------------------------*/
+function Obstacle_A(object) {
+	this.image = function() {
+		return imgRepo.obstacle_1;
+	};
+}
+Obstacle_A.prototype = new Obstacle();
+
+/*-----------------------------------------------------
+	Obstacle type B
+-----------------------------------------------------*/
+function Obstacle_B(object) {
+	this.image = function() {
+		return imgRepo.obstacle_2;
+	};
+}
+Obstacle_B.prototype = new Obstacle();/*-----------------------------------------------------
 	STARTING THE GAME.
 
 	create the image repository: when all the images
@@ -372,9 +530,9 @@ function Game() {
 			this.mainContext = this.mainCanvas.getContext("2d");
 			this.obstaclesContext = this.obstaclesCanvas.getContext("2d");
 
-			MainCharacter.prototype.context = this.mainContext;
-			MainCharacter.prototype.canvasWidth = this.mainCanvas.width;
-			MainCharacter.prototype.canvasHeight = this.mainCanvas.height;
+			Player.prototype.context = this.mainContext;
+			Player.prototype.canvasWidth = this.mainCanvas.width;
+			Player.prototype.canvasHeight = this.mainCanvas.height;
 
 			Enemy_A.prototype.context = this.enemiesContext;
 			Enemy_A.prototype.canvasWidth = this.enemiesCanvas.width;
@@ -388,34 +546,44 @@ function Game() {
 			Bullet.prototype.canvasWidth = this.enemiesCanvas.width;
 			Bullet.prototype.canvasHeight = this.enemiesCanvas.height;
 
-			// create main character
-			this.mainCharacter = new MainCharacter();
-			this.mainCharacter.init(
+			Obstacle_A.prototype.context = this.obstaclesContext;
+			Obstacle_A.prototype.canvasWidth = this.obstaclesCanvas.width;
+			Obstacle_A.prototype.canvasHeight = this.obstaclesCanvas.height;
+
+			Obstacle_B.prototype.context = this.obstaclesContext;
+			Obstacle_B.prototype.canvasWidth = this.obstaclesCanvas.width;
+			Obstacle_B.prototype.canvasHeight = this.obstaclesCanvas.height;
+
+			// create player
+			this.player = new Player();
+			this.player.init(
 				10,
-				this.mainCanvas.height-imgRepo.main.height,
+				this.mainCanvas.height-imgRepo.main.height-200,
 				imgRepo.main.width,
 				imgRepo.main.height
 			);
 
 			// create enemy_1
-			this.firstEnemy = new Enemy_A();
-			this.firstEnemy.init(
-				200,
+			this.enemies = [];
+
+			this.enemies[0] = new Enemy_A();
+			this.enemies[0].init(
+				150,
 				this.enemiesCanvas.height-imgRepo.enemy_1.height,
 				imgRepo.enemy_1.width,
 				imgRepo.enemy_1.height
 			);
-			this.secondEnemy = new Enemy_A();
-			this.secondEnemy.init(
-				400,
+			this.enemies[1] = new Enemy_A();
+			this.enemies[1].init(
+				370,
 				this.enemiesCanvas.height-imgRepo.enemy_1.height,
 				imgRepo.enemy_1.width,
 				imgRepo.enemy_1.height
 			);
-			this.thirdEnemy = new Enemy_B();
-			this.thirdEnemy.init(
+			this.enemies[2] = new Enemy_B();
+			this.enemies[2].init(
 				600,
-				this.enemiesCanvas.height,
+				this.enemiesCanvas.height-10,
 				imgRepo.enemy_2.width,
 				imgRepo.enemy_2.height
 			);
@@ -424,7 +592,34 @@ function Game() {
 			// (the bullets remain on screen even if
 			// enemies get killed)
 			this.enemyBulletPool = new BulletPool(40);
-			this.enemyBulletPool.init("enemyBullet");
+			this.enemyBulletPool.init(DRAWABLE_TYPES.enemyBullet);
+
+			// create obstacles
+			this.obstacles = [];
+
+			this.obstacles[0] = new Obstacle_A();
+			this.obstacles[0].init(
+				80,
+				this.obstaclesCanvas.height - imgRepo.obstacle_1.height,
+				imgRepo.obstacle_1.width,
+				imgRepo.obstacle_1.height
+			);
+
+			this.obstacles[1] = new Obstacle_A();
+			this.obstacles[1].init(
+				300,
+				this.obstaclesCanvas.height - imgRepo.obstacle_1.height,
+				imgRepo.obstacle_1.width,
+				imgRepo.obstacle_1.height
+			);
+
+			this.obstacles[2] = new Obstacle_B();
+			this.obstacles[2].init(
+				this.obstaclesCanvas.width - imgRepo.obstacle_2.width,
+				this.obstaclesCanvas.height - imgRepo.obstacle_2.height,
+				imgRepo.obstacle_2.width,
+				imgRepo.obstacle_2.height
+			);
 
 			return true;
 
@@ -436,7 +631,11 @@ function Game() {
 
 	this.start = function() {
 		console.log("START");
-		this.mainCharacter.draw();
+		this.player.draw();
+		for (var i=0; i<game.obstacles.length; i++) {
+			game.obstacles[i].draw();
+		}
+		//start animation loop
 		animate();
 	};
 }
@@ -451,17 +650,19 @@ function animate () {
 	requestAnimFrame( animate );
 
 	// react to keys pressed and draw the main character
-	game.mainCharacter.move();
+	game.player.move();
 	// eventually draw the bullets fired by the main char.
-	game.mainCharacter.bulletPool.animate();
+	game.player.bulletPool.animate();
 
 	// move enemies
-	game.firstEnemy.draw();
-	game.secondEnemy.draw();
-	game.thirdEnemy.draw();
+	for (var i=0; i<game.enemies.length; i++) {
+		game.enemies[i].draw();
+	}
 
 	// eventually draw the bullets fired by the enemies
 	game.enemyBulletPool.animate();
+
+	collisionDetection();
 }
 
 window.requestAnimFrame = (function(){
@@ -504,18 +705,24 @@ function ImgRepo() {
 	this.main = createImage();
 	this.enemy_1 = createImage();
 	this.enemy_2 = createImage();
+	this.obstacle_1 = createImage();
+	this.obstacle_2 = createImage();
 
 	this.mainBullet.onload = function() { onImageLoad(); };
 	this.enemyBullet.onload = function() { onImageLoad(); };
 	this.main.onload = function() { onImageLoad(); };
 	this.enemy_1.onload = function() { onImageLoad(); };
 	this.enemy_2.onload = function() { onImageLoad(); };
+	this.obstacle_1.onload = function() { onImageLoad(); };
+	this.obstacle_2.onload = function() { onImageLoad(); };
 
 	this.mainBullet.src = "./img/bullet_main.png";
 	this.enemyBullet.src = "./img/bullet_enemy.png";
 	this.main.src = "./img/main.png";
 	this.enemy_1.src = "./img/enemy_1.png";
 	this.enemy_2.src = "./img/enemy_2.png";
+	this.obstacle_1.src = "./img/obstacle_1.png";
+	this.obstacle_2.src = "./img/obstacle_2.png";
 
 }// The keycodes that will be mapped when a user presses a button.
 // Original code by Doug McInnes

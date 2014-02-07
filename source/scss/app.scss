@@ -12,7 +12,7 @@ canvas {
 	background: transparent;
 }
 
-#bg {z-index: -1}
+#bg {z-index: 3}
 #main {z-index: 0}
 #enemies {z-index: 1}
 #obstacles {z-index: 2}

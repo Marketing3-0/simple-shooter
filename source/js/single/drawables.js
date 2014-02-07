@@ -1,3 +1,13 @@
+var DRAWABLE_TYPES = {
+	drawable:"drawable",
+	obstacle:"obstacle",
+	player: "player",
+	enemy: "enemy",
+	bullet: "bullet",
+	enemyBullet: "enemyBullet"
+};
+
+
 /*-----------------------------------------------------
 	Base Drawable class
 
@@ -11,8 +21,10 @@ function Drawable() {
 		this.y = y;
 		this.width = width;
 		this.height = height;
+		this.previousPosition = {x: this.x, y:this.y};
 	};
 	
+	this.type = DRAWABLE_TYPES.drawable;
 	this.speed = 0; //speed and direction of the movement
 	this.canvasWidth = 0;
 	this.canvasHeight = 0;
@@ -23,11 +35,13 @@ function Drawable() {
 }
 
 /*-----------------------------------------------------
-	Main Character element (the user)
+	Player element (the user)
 
 	Can move, jump and shoot
 -----------------------------------------------------*/
-function MainCharacter() {
+function Player() {
+
+	this.type = DRAWABLE_TYPES.player;
 	
 	this.speed = {x: 3, y: 5};
 	
@@ -35,7 +49,12 @@ function MainCharacter() {
 	var fireRate = 15; //fire at least every 15 frames
 	var fireCounter = 0;
 
-	var isJumping = false;
+
+	this.isTouchingTheFloor = false;
+
+	this.floorHeight = null;
+
+	this.isJumping = false;
 	var jumpFrames = 15; // up for 10 frames, down for 10 frames
 	var jumpCounter = 0;
 
@@ -45,7 +64,7 @@ function MainCharacter() {
 		this.width = w;
 		this.height = h;
 		this.alive = true;
-		this.bulletPool.init("bullet");
+		this.bulletPool.init(DRAWABLE_TYPES.bullet);
 		this.facingLeft = false; // shoot direction
 	};
 
@@ -55,13 +74,29 @@ function MainCharacter() {
 
 	this.move = function() {
 		fireCounter++;
+		this.previousPosition = {x: this.x, y:this.y};
+
+		// clear the rect around the player
+		var clearPadding = 50;
+		this.context.clearRect(this.x-clearPadding, this.y-clearPadding, this.width+(2*clearPadding), this.height+(2*clearPadding));
+
+		// check 
+		if (!this.floorHeight) {
+			this.floorHeight = this.canvasHeight;
+		}
+		if (this.y + this.height > this.floorHeight) {
+			this.y = this.floorHeight - this.height;
+			this.isTouchingTheFloor = true;
+			this.speed.y = 0;
+		}
+
+		this.y += this.speed.y;
 
 		// determine the action to perform based on the key pressed:
 		// moving or jumping
-		if (KEY_STATUS.left || KEY_STATUS.right || KEY_STATUS.up || isJumping) {
+		if (KEY_STATUS.left || KEY_STATUS.right || KEY_STATUS.up || this.isJumping) {
 
 			// it moved -> clear the rectangle
-			this.context.clearRect(this.x, this.y, this.width, this.height);
 
 			if (KEY_STATUS.left) {
 				this.facingLeft = true;
@@ -77,12 +112,17 @@ function MainCharacter() {
 				}
 			}
 
-			if (KEY_STATUS.up && !isJumping) {
-				isJumping = true;
+
+			if (KEY_STATUS.up && this.isTouchingTheFloor) {
+
+				this.speed.y = -5;
+				this.y += this.speed.y;
+				this.isJumping = true;
+				this.isTouchingTheFloor = false;
 			}
 		}
 
-		if (isJumping) {
+		if (this.isJumping) {
 			this.jump();
 		}
 
@@ -102,25 +142,20 @@ function MainCharacter() {
 
 	};
 
+	// jump up for jumpFrames frames and then fall fown until
+	// it reaches a limit (the ground)
 	this.jump = function() {
+
 		jumpCounter++;
 
 		if (jumpCounter === jumpFrames) {
 			this.speed.y = -this.speed.y;
-		}
-		if (jumpCounter === 2*jumpFrames) {
-			this.speed.y = -this.speed.y;
-			isJumping = false;
+			this.isJumping = false;
 			jumpCounter = 0;
-		}
-
-		this.y -= this.speed.y;
-		if (this.y > this.canvasHeight-10) {
-			this.y = this.canvasHeight-10;
 		}
 	};
 }
-MainCharacter.prototype = new Drawable();
+Player.prototype = new Drawable();
 
 
 /*-----------------------------------------------------
@@ -130,6 +165,8 @@ MainCharacter.prototype = new Drawable();
 	is defined in the subclasses
 -----------------------------------------------------*/
 function Enemy() {
+
+	this.type = DRAWABLE_TYPES.enemy;
 
 	// initialize enemy
 	this.init = function(x, y, width, height) {
@@ -285,7 +322,7 @@ function Bullet(object) {
 	
 	// can be "bullet" or "enemyBullet"
 	// (see Pool class)
-	var typeOfBullet = object;
+	this.type = object;
 
 	// re-initialize a bullet and make it alive
 	this.spawn = function(x, y, speed) {
@@ -311,10 +348,10 @@ function Bullet(object) {
 			return true;
 		
 		} else {
-			if (typeOfBullet === "bullet") {
+			if (this.type === DRAWABLE_TYPES.bullet) {
 				this.context.drawImage(imgRepo.mainBullet, this.x, this.y);
 			}
-			else if (typeOfBullet === "enemyBullet") {
+			else if (this.type === DRAWABLE_TYPES.enemyBullet) {
 				this.context.drawImage(imgRepo.enemyBullet, this.x, this.y);
 			}
 			
@@ -332,3 +369,40 @@ function Bullet(object) {
 	};
 }
 Bullet.prototype = new Drawable();
+
+/*-----------------------------------------------------
+	Obstacle element (abstract)
+-----------------------------------------------------*/
+function Obstacle(object) {
+
+	this.type = DRAWABLE_TYPES.obstacle;
+	
+	// drawn only once, at creation time
+	this.draw = function() {
+		this.context.drawImage(this.image(), this.x, this.y);
+	};
+
+	//to be overridden
+	this.image = function() { };
+}
+Obstacle.prototype = new Drawable();
+
+/*-----------------------------------------------------
+	Obstacle type A
+-----------------------------------------------------*/
+function Obstacle_A(object) {
+	this.image = function() {
+		return imgRepo.obstacle_1;
+	};
+}
+Obstacle_A.prototype = new Obstacle();
+
+/*-----------------------------------------------------
+	Obstacle type B
+-----------------------------------------------------*/
+function Obstacle_B(object) {
+	this.image = function() {
+		return imgRepo.obstacle_2;
+	};
+}
+Obstacle_B.prototype = new Obstacle();

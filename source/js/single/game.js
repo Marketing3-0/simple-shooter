@@ -39,9 +39,9 @@ function Game() {
 			this.mainContext = this.mainCanvas.getContext("2d");
 			this.obstaclesContext = this.obstaclesCanvas.getContext("2d");
 
-			MainCharacter.prototype.context = this.mainContext;
-			MainCharacter.prototype.canvasWidth = this.mainCanvas.width;
-			MainCharacter.prototype.canvasHeight = this.mainCanvas.height;
+			Player.prototype.context = this.mainContext;
+			Player.prototype.canvasWidth = this.mainCanvas.width;
+			Player.prototype.canvasHeight = this.mainCanvas.height;
 
 			Enemy_A.prototype.context = this.enemiesContext;
 			Enemy_A.prototype.canvasWidth = this.enemiesCanvas.width;
@@ -55,34 +55,44 @@ function Game() {
 			Bullet.prototype.canvasWidth = this.enemiesCanvas.width;
 			Bullet.prototype.canvasHeight = this.enemiesCanvas.height;
 
-			// create main character
-			this.mainCharacter = new MainCharacter();
-			this.mainCharacter.init(
+			Obstacle_A.prototype.context = this.obstaclesContext;
+			Obstacle_A.prototype.canvasWidth = this.obstaclesCanvas.width;
+			Obstacle_A.prototype.canvasHeight = this.obstaclesCanvas.height;
+
+			Obstacle_B.prototype.context = this.obstaclesContext;
+			Obstacle_B.prototype.canvasWidth = this.obstaclesCanvas.width;
+			Obstacle_B.prototype.canvasHeight = this.obstaclesCanvas.height;
+
+			// create player
+			this.player = new Player();
+			this.player.init(
 				10,
-				this.mainCanvas.height-imgRepo.main.height,
+				this.mainCanvas.height-imgRepo.main.height-200,
 				imgRepo.main.width,
 				imgRepo.main.height
 			);
 
 			// create enemy_1
-			this.firstEnemy = new Enemy_A();
-			this.firstEnemy.init(
-				200,
+			this.enemies = [];
+
+			this.enemies[0] = new Enemy_A();
+			this.enemies[0].init(
+				150,
 				this.enemiesCanvas.height-imgRepo.enemy_1.height,
 				imgRepo.enemy_1.width,
 				imgRepo.enemy_1.height
 			);
-			this.secondEnemy = new Enemy_A();
-			this.secondEnemy.init(
-				400,
+			this.enemies[1] = new Enemy_A();
+			this.enemies[1].init(
+				370,
 				this.enemiesCanvas.height-imgRepo.enemy_1.height,
 				imgRepo.enemy_1.width,
 				imgRepo.enemy_1.height
 			);
-			this.thirdEnemy = new Enemy_B();
-			this.thirdEnemy.init(
+			this.enemies[2] = new Enemy_B();
+			this.enemies[2].init(
 				600,
-				this.enemiesCanvas.height,
+				this.enemiesCanvas.height-10,
 				imgRepo.enemy_2.width,
 				imgRepo.enemy_2.height
 			);
@@ -91,7 +101,34 @@ function Game() {
 			// (the bullets remain on screen even if
 			// enemies get killed)
 			this.enemyBulletPool = new BulletPool(40);
-			this.enemyBulletPool.init("enemyBullet");
+			this.enemyBulletPool.init(DRAWABLE_TYPES.enemyBullet);
+
+			// create obstacles
+			this.obstacles = [];
+
+			this.obstacles[0] = new Obstacle_A();
+			this.obstacles[0].init(
+				80,
+				this.obstaclesCanvas.height - imgRepo.obstacle_1.height,
+				imgRepo.obstacle_1.width,
+				imgRepo.obstacle_1.height
+			);
+
+			this.obstacles[1] = new Obstacle_A();
+			this.obstacles[1].init(
+				300,
+				this.obstaclesCanvas.height - imgRepo.obstacle_1.height,
+				imgRepo.obstacle_1.width,
+				imgRepo.obstacle_1.height
+			);
+
+			this.obstacles[2] = new Obstacle_B();
+			this.obstacles[2].init(
+				this.obstaclesCanvas.width - imgRepo.obstacle_2.width,
+				this.obstaclesCanvas.height - imgRepo.obstacle_2.height,
+				imgRepo.obstacle_2.width,
+				imgRepo.obstacle_2.height
+			);
 
 			return true;
 
@@ -103,7 +140,11 @@ function Game() {
 
 	this.start = function() {
 		console.log("START");
-		this.mainCharacter.draw();
+		this.player.draw();
+		for (var i=0; i<game.obstacles.length; i++) {
+			game.obstacles[i].draw();
+		}
+		//start animation loop
 		animate();
 	};
 }
@@ -118,17 +159,19 @@ function animate () {
 	requestAnimFrame( animate );
 
 	// react to keys pressed and draw the main character
-	game.mainCharacter.move();
+	game.player.move();
 	// eventually draw the bullets fired by the main char.
-	game.mainCharacter.bulletPool.animate();
+	game.player.bulletPool.animate();
 
 	// move enemies
-	game.firstEnemy.draw();
-	game.secondEnemy.draw();
-	game.thirdEnemy.draw();
+	for (var i=0; i<game.enemies.length; i++) {
+		game.enemies[i].draw();
+	}
 
 	// eventually draw the bullets fired by the enemies
 	game.enemyBulletPool.animate();
+
+	collisionDetection();
 }
 
 window.requestAnimFrame = (function(){
