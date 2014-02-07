@@ -1,8 +1,12 @@
 #canvas_container {
 	border: 1px solid black;
 	width: 640px;
-	height: 360px;
+	height: 200px;
 	position: relative;
+
+	background: url('../img/wall.jpg');
+	background-repeat: repeat;
+	background-size: contain;
 }
 
 canvas {
@@ -30,7 +34,7 @@ canvas {
 
 	text-align: center;
 
-	padding-top: 100px;
+	padding-top: 50px;
 
 	p {
 		cursor: pointer;

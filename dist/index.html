@@ -10,10 +10,10 @@
     <h1>HTML5 2D Shooting Game</h1>
 
     <div id="canvas_container">
-      <canvas id="bg" width="640" height="360">Canvas not supported by the browser</canvas>
-      <canvas id="main" width="640" height="360">Canvas not supported by the browser</canvas>
-      <canvas id="enemies" width="640" height="360">Canvas not supported by the browser</canvas>
-      <canvas id="obstacles" width="640" height="360">Canvas not supported by the browser</canvas>
+      <canvas id="bg" width="640" height="200">Canvas not supported by the browser</canvas>
+      <canvas id="main" width="640" height="200">Canvas not supported by the browser</canvas>
+      <canvas id="enemies" width="640" height="200">Canvas not supported by the browser</canvas>
+      <canvas id="obstacles" width="640" height="200">Canvas not supported by the browser</canvas>
       <div id="gameOver">
         Game Over
         <p onclick="game.restart();">Restart</p>
@@ -28,6 +28,7 @@
       <p>Move: left &amp; right arrow<br>
       Jump: up arrow<br>
       Shoot: space</p>
+      <p onclick="game.restart();">If you have troubles, simply refresh the page</p>
     </div>
 
     <small>by Marco Ciampini</small>

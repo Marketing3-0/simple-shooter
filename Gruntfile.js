@@ -26,17 +26,7 @@ module.exports = function(grunt) {
       }
     },
 
-    concat: {
-      options: {
-        separator: ''
-      },
-      dist: {
-        src: ['./source/js/single/*.js'],
-        dest: './source/js/concat.js'
-      }
-    },
-
-    uglify: {
+  uglify: {
       options: {
         // the banner is inserted at the top of the output
         banner: '/*! <%= pkg.name %> <%= grunt.template.today("dd-mm-yyyy") %> */\n',
@@ -44,7 +34,7 @@ module.exports = function(grunt) {
       },
       dist: {
         files: {
-          './dist/js/app.min.js': ['./source/js/single/*.js']
+          './dist/js/app.min.js': ['./source/js/*.js']
         }
       }
     },
@@ -63,7 +53,7 @@ module.exports = function(grunt) {
         browser:true // defines globals exposed by modern browsers (document, navigator, FileReader...)
       },
 
-      scripts: './source/js/single/*.js',
+      scripts: './source/js/*.js',
 
       gruntfile: 'Gruntfile.js'
     },
@@ -85,8 +75,8 @@ module.exports = function(grunt) {
       },
 
       scripts: {
-        files: './source/js/single/*.js',
-        tasks: ['jshint:scripts', 'concat', 'uglify']
+        files: './source/js/*.js',
+        tasks: ['jshint:scripts', 'uglify']
       },
 
       html: {
@@ -101,7 +91,6 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-connect');
   grunt.loadNpmTasks('grunt-sass');
   grunt.loadNpmTasks('grunt-contrib-clean');
-  grunt.loadNpmTasks('grunt-contrib-concat');
   grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-contrib-watch');

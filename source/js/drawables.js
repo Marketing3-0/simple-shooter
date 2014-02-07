@@ -244,8 +244,8 @@ function Enemy_A() {
 		// befor it is impossible (x and y are not initialized)
 		if (!this.limit) {
 			this.limit = {
-				left: this.x - 45,
-				right: this.x + 45,
+				left: this.x - 35,
+				right: this.x + 35,
 			};
 		}
 
