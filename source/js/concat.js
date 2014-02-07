@@ -1,10 +1,12 @@
 function collisionDetection() {
 
-	var i;
+	var i,j;
 	var playerCanGoDown = 0;
 
 	// check the obstacles:
 	for (i=0; i<game.obstacles.length; i++) {
+
+		// if player touches obstacles
 		if (intersection(game.player, game.obstacles[i])) {
 
 			//game.player.context.clearRect(
@@ -23,13 +25,47 @@ function collisionDetection() {
 				playerCanGoDown++;
 			}
 		}
+
+		// if player's bullet touches obstacles
+		for (j=0; j<game.player.bulletPool.getPool().length; j++) {
+			if (intersection(game.obstacles[i], game.player.bulletPool.getPool()[j])) {
+				game.player.bulletPool.getPool()[j].isColliding = true;
+			}
+		}
+
+		// if enemy's bullet touches obstacles
+		for (j=0; j<game.enemyBulletPool.getPool().length; j++) {
+			if (intersection(game.obstacles[i], game.enemyBulletPool.getPool()[j])) {
+				game.enemyBulletPool.getPool()[j].isColliding = true;
+			}
+		}
 	}
 
 	for (i=0; i<game.enemies.length; i++) {
-		if (intersection(game.player, game.enemies[i])) {
+		if (game.enemies[i].alive) {
+
+			if (intersection(game.player, game.enemies[i])) {
+				game.player.alive = false;
+			}
+
+			for (j=0; j<game.player.bulletPool.getPool().length; j++) {
+				if (intersection(game.enemies[i], game.player.bulletPool.getPool()[j])) {
+					game.enemies[i].alive = false;
+					game.player.bulletPool.getPool()[j].isColliding = true;
+				}
+			}
+		}
+	}
+
+	// if the enemy's bullet touches the player
+
+	for (i=0; i<game.enemyBulletPool.getPool().length; i++) {
+		if ( intersection(game.player, game.enemyBulletPool.getPool()[i]) ) {
+			game.enemyBulletPool.getPool()[i].isColliding = true;
 			game.player.alive = false;
 		}
 	}
+
 
 	// the player changes is no more touching the top of an obstacle,
 
@@ -133,18 +169,10 @@ function Player() {
 
 	this.type = DRAWABLE_TYPES.player;
 	
-	this.speed = {x: 3, y: 5};
-	
 	this.bulletPool = new BulletPool(30);
 	var fireRate = 15; //fire at least every 15 frames
 	var fireCounter = 0;
 
-
-	this.isTouchingTheFloor = false;
-
-	this.floorHeight = null;
-
-	this.isJumping = false;
 	var jumpFrames = 15; // up for 10 frames, down for 10 frames
 	var jumpCounter = 0;
 
@@ -156,6 +184,11 @@ function Player() {
 		this.alive = true;
 		this.bulletPool.init(DRAWABLE_TYPES.bullet);
 		this.facingLeft = false; // shoot direction
+		this.speed = {x: 3, y: 5};
+		this.isTouchingTheFloor = false;
+		this.floorHeight = null;
+		this.isJumping = false;
+		jumpCounter = 0;
 	};
 
 	this.draw = function() {
@@ -228,7 +261,7 @@ function Player() {
 	this.fire = function() {
 		var bulletSpeed = this.facingLeft ? -5 : 5;
 		var bulletStartingX = this.facingLeft ? this.x-imgRepo.mainBullet.width : this.x+this.width;
-		this.bulletPool.shoot(bulletStartingX, this.y+6, bulletSpeed);
+		this.bulletPool.shoot(bulletStartingX, this.y+10, bulletSpeed);
 
 	};
 
@@ -236,7 +269,7 @@ function Player() {
 	// it reaches a limit (the ground)
 	this.jump = function() {
 
-		jumpCounter++;
+		jumpCounter = (jumpCounter+1) % (jumpFrames+1);
 
 		if (jumpCounter === jumpFrames) {
 			this.speed.y = -this.speed.y;
@@ -277,25 +310,21 @@ function Enemy() {
 		// clear the previous frame pixels
 		this.context.clearRect(this.x-1, this.y, this.width+1, this.height);
 		
-		this.x += this.speed.x;
-		this.y += this.speed.y;
+		if (this.alive) {
+			this.x += this.speed.x;
+			this.y += this.speed.y;
 
-		//MOVEMENT LOGIC
-		this.calculateBehaviour();
-		
-		//if (!this.isColliding) {
+			//MOVEMENT LOGIC
+			this.calculateBehaviour();
+
 			this.context.drawImage(
 				this.image(),
 				this.x,
 				this.y
 			);
-			
+		
 			return false;
-		//} else {
-		//game.playerScore += 10;
-		//game.explosion.get();
-		//return true;
-		//}
+		}
 	};
 
 	// the bullet is normally fired at the top px of the enemy
@@ -420,6 +449,7 @@ function Bullet(object) {
 		this.y = y;
 		this.speed = speed;
 		this.alive = true;
+		this.isColliding = false;
 	};
 
 	// clear the rectangle around the bullet in the previous frame
@@ -431,10 +461,10 @@ function Bullet(object) {
 		this.context.clearRect(this.x-1, this.y-1, this.width+2, this.height+2);
 		this.x += this.speed;
 		
-		//if (this.isColliding) {
-		//return true;
-		//} else
-		if (this.x < 0 || this.x > this.canvasWidth-this.width) {
+		if (this.isColliding) {
+			return true;
+
+		} else if (this.x < 0 || this.x > this.canvasWidth-this.width) {
 			return true;
 		
 		} else {
@@ -455,7 +485,7 @@ function Bullet(object) {
 		this.y = 0;
 		this.speed = 0;
 		this.alive = false;
-		// this.isColliding = false;
+		this.isColliding = false;
 	};
 }
 Bullet.prototype = new Drawable();
@@ -644,6 +674,76 @@ function Game() {
 		//start animation loop
 		animate();
 	};
+
+	this.gameOver = function() {
+		document.getElementById("gameOver").style.display = "block";
+	};
+
+	this.win = function() {
+		document.getElementById("gameWin").style.display = "block";
+	};
+
+	this.restart = function() {
+		document.getElementById("gameOver").style.display = "none";
+		document.getElementById("gameWin").style.display = "none";
+
+		this.bgContext.clearRect(0,0,this.bgCanvas.width, this.bgCanvas.height);
+		this.enemiesContext.clearRect(0,0,this.enemiesCanvas.width, this.enemiesCanvas.height);
+		this.mainContext.clearRect(0,0,this.mainCanvas.width, this.mainCanvas.height);
+		this.obstaclesContext.clearRect(0,0,this.obstaclesCanvas.width, this.obstaclesCanvas.height);
+
+		this.player.init(
+			10,
+			this.mainCanvas.height-imgRepo.main.height-200,
+			imgRepo.main.width,
+			imgRepo.main.height
+		);
+
+		this.enemies[0].init(
+			150,
+			this.enemiesCanvas.height-imgRepo.enemy_1.height,
+			imgRepo.enemy_1.width,
+			imgRepo.enemy_1.height
+		);
+		this.enemies[1].init(
+			370,
+			this.enemiesCanvas.height-imgRepo.enemy_1.height,
+			imgRepo.enemy_1.width,
+			imgRepo.enemy_1.height
+		);
+		this.enemies[2].init(
+			600,
+			this.enemiesCanvas.height-10,
+			imgRepo.enemy_2.width,
+			imgRepo.enemy_2.height
+		);
+
+		this.enemyBulletPool.init(DRAWABLE_TYPES.enemyBullet);
+
+		this.obstacles[0].init(
+				80,
+				this.obstaclesCanvas.height - imgRepo.obstacle_1.height,
+				imgRepo.obstacle_1.width,
+				imgRepo.obstacle_1.height
+			);
+
+		this.obstacles[1].init(
+			300,
+			this.obstaclesCanvas.height - imgRepo.obstacle_1.height,
+			imgRepo.obstacle_1.width,
+			imgRepo.obstacle_1.height
+		);
+
+		this.obstacles[2].init(
+			this.obstaclesCanvas.width - imgRepo.obstacle_2.width,
+			this.obstaclesCanvas.height - imgRepo.obstacle_2.height,
+			imgRepo.obstacle_2.width,
+			imgRepo.obstacle_2.height
+		);
+
+		this.start();
+
+	};
 }
 
 /*-----------------------------------------------------
@@ -653,26 +753,41 @@ function Game() {
 function animate () {
 	// recursively call this method for
 	// the next available frame
+
+	var i;
 	
 	if (game.player.alive) {
-		requestAnimFrame( animate );
 
-		// react to keys pressed and draw the main character
-		game.player.move();
-		// eventually draw the bullets fired by the main char.
-		game.player.bulletPool.animate();
+		var deadEnemies = 0;
+		for (i=0; i<game.enemies.length; i++) {
+			if (!game.enemies[i].alive) {
+				deadEnemies++;
+			}
+		}
+		if (deadEnemies === game.enemies.length) {
+			game.win();
 
-		// move enemies
-		for (var i=0; i<game.enemies.length; i++) {
-			game.enemies[i].draw();
+		} else {
+			requestAnimFrame( animate );
+
+			// react to keys pressed and draw the main character
+			game.player.move();
+			// eventually draw the bullets fired by the main char.
+			game.player.bulletPool.animate();
+
+			// move enemies
+			for (i=0; i<game.enemies.length; i++) {
+				game.enemies[i].draw();
+			}
+
+			// eventually draw the bullets fired by the enemies
+			game.enemyBulletPool.animate();
+
+			collisionDetection();
 		}
 
-		// eventually draw the bullets fired by the enemies
-		game.enemyBulletPool.animate();
-
-		collisionDetection();
 	} else {
-		document.getElementById("gameOver").style.display = "block";
+		game.gameOver();
 	}
 }
 

@@ -16,12 +16,18 @@
       <canvas id="obstacles" width="640" height="360">Canvas not supported by the browser</canvas>
       <div id="gameOver">
         Game Over
-        <p>Restart</p>
+        <p onclick="game.restart();">Restart</p>
+      </div>
+      <div id="gameWin">
+        YOU WON !!
+        <p onclick="game.restart();">Restart</p>
       </div>
     </div>
     
     <div id="instructions">
-      <p>Move, Jump and Shoot at the enemies !</p>
+      <p>Move: left &amp; right arrow<br>
+      Jump: up arrow<br>
+      Shoot: space</p>
     </div>
 
     <small>by Marco Ciampini</small>

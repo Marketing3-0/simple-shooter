@@ -147,6 +147,76 @@ function Game() {
 		//start animation loop
 		animate();
 	};
+
+	this.gameOver = function() {
+		document.getElementById("gameOver").style.display = "block";
+	};
+
+	this.win = function() {
+		document.getElementById("gameWin").style.display = "block";
+	};
+
+	this.restart = function() {
+		document.getElementById("gameOver").style.display = "none";
+		document.getElementById("gameWin").style.display = "none";
+
+		this.bgContext.clearRect(0,0,this.bgCanvas.width, this.bgCanvas.height);
+		this.enemiesContext.clearRect(0,0,this.enemiesCanvas.width, this.enemiesCanvas.height);
+		this.mainContext.clearRect(0,0,this.mainCanvas.width, this.mainCanvas.height);
+		this.obstaclesContext.clearRect(0,0,this.obstaclesCanvas.width, this.obstaclesCanvas.height);
+
+		this.player.init(
+			10,
+			this.mainCanvas.height-imgRepo.main.height-200,
+			imgRepo.main.width,
+			imgRepo.main.height
+		);
+
+		this.enemies[0].init(
+			150,
+			this.enemiesCanvas.height-imgRepo.enemy_1.height,
+			imgRepo.enemy_1.width,
+			imgRepo.enemy_1.height
+		);
+		this.enemies[1].init(
+			370,
+			this.enemiesCanvas.height-imgRepo.enemy_1.height,
+			imgRepo.enemy_1.width,
+			imgRepo.enemy_1.height
+		);
+		this.enemies[2].init(
+			600,
+			this.enemiesCanvas.height-10,
+			imgRepo.enemy_2.width,
+			imgRepo.enemy_2.height
+		);
+
+		this.enemyBulletPool.init(DRAWABLE_TYPES.enemyBullet);
+
+		this.obstacles[0].init(
+				80,
+				this.obstaclesCanvas.height - imgRepo.obstacle_1.height,
+				imgRepo.obstacle_1.width,
+				imgRepo.obstacle_1.height
+			);
+
+		this.obstacles[1].init(
+			300,
+			this.obstaclesCanvas.height - imgRepo.obstacle_1.height,
+			imgRepo.obstacle_1.width,
+			imgRepo.obstacle_1.height
+		);
+
+		this.obstacles[2].init(
+			this.obstaclesCanvas.width - imgRepo.obstacle_2.width,
+			this.obstaclesCanvas.height - imgRepo.obstacle_2.height,
+			imgRepo.obstacle_2.width,
+			imgRepo.obstacle_2.height
+		);
+
+		this.start();
+
+	};
 }
 
 /*-----------------------------------------------------
@@ -156,26 +226,41 @@ function Game() {
 function animate () {
 	// recursively call this method for
 	// the next available frame
+
+	var i;
 	
 	if (game.player.alive) {
-		requestAnimFrame( animate );
 
-		// react to keys pressed and draw the main character
-		game.player.move();
-		// eventually draw the bullets fired by the main char.
-		game.player.bulletPool.animate();
+		var deadEnemies = 0;
+		for (i=0; i<game.enemies.length; i++) {
+			if (!game.enemies[i].alive) {
+				deadEnemies++;
+			}
+		}
+		if (deadEnemies === game.enemies.length) {
+			game.win();
 
-		// move enemies
-		for (var i=0; i<game.enemies.length; i++) {
-			game.enemies[i].draw();
+		} else {
+			requestAnimFrame( animate );
+
+			// react to keys pressed and draw the main character
+			game.player.move();
+			// eventually draw the bullets fired by the main char.
+			game.player.bulletPool.animate();
+
+			// move enemies
+			for (i=0; i<game.enemies.length; i++) {
+				game.enemies[i].draw();
+			}
+
+			// eventually draw the bullets fired by the enemies
+			game.enemyBulletPool.animate();
+
+			collisionDetection();
 		}
 
-		// eventually draw the bullets fired by the enemies
-		game.enemyBulletPool.animate();
-
-		collisionDetection();
 	} else {
-		document.getElementById("gameOver").style.display = "block";
+		game.gameOver();
 	}
 }
 

@@ -43,18 +43,10 @@ function Player() {
 
 	this.type = DRAWABLE_TYPES.player;
 	
-	this.speed = {x: 3, y: 5};
-	
 	this.bulletPool = new BulletPool(30);
 	var fireRate = 15; //fire at least every 15 frames
 	var fireCounter = 0;
 
-
-	this.isTouchingTheFloor = false;
-
-	this.floorHeight = null;
-
-	this.isJumping = false;
 	var jumpFrames = 15; // up for 10 frames, down for 10 frames
 	var jumpCounter = 0;
 
@@ -66,6 +58,11 @@ function Player() {
 		this.alive = true;
 		this.bulletPool.init(DRAWABLE_TYPES.bullet);
 		this.facingLeft = false; // shoot direction
+		this.speed = {x: 3, y: 5};
+		this.isTouchingTheFloor = false;
+		this.floorHeight = null;
+		this.isJumping = false;
+		jumpCounter = 0;
 	};
 
 	this.draw = function() {
@@ -138,7 +135,7 @@ function Player() {
 	this.fire = function() {
 		var bulletSpeed = this.facingLeft ? -5 : 5;
 		var bulletStartingX = this.facingLeft ? this.x-imgRepo.mainBullet.width : this.x+this.width;
-		this.bulletPool.shoot(bulletStartingX, this.y+6, bulletSpeed);
+		this.bulletPool.shoot(bulletStartingX, this.y+10, bulletSpeed);
 
 	};
 
@@ -146,7 +143,7 @@ function Player() {
 	// it reaches a limit (the ground)
 	this.jump = function() {
 
-		jumpCounter++;
+		jumpCounter = (jumpCounter+1) % (jumpFrames+1);
 
 		if (jumpCounter === jumpFrames) {
 			this.speed.y = -this.speed.y;
@@ -187,25 +184,21 @@ function Enemy() {
 		// clear the previous frame pixels
 		this.context.clearRect(this.x-1, this.y, this.width+1, this.height);
 		
-		this.x += this.speed.x;
-		this.y += this.speed.y;
+		if (this.alive) {
+			this.x += this.speed.x;
+			this.y += this.speed.y;
 
-		//MOVEMENT LOGIC
-		this.calculateBehaviour();
-		
-		//if (!this.isColliding) {
+			//MOVEMENT LOGIC
+			this.calculateBehaviour();
+
 			this.context.drawImage(
 				this.image(),
 				this.x,
 				this.y
 			);
-			
+		
 			return false;
-		//} else {
-		//game.playerScore += 10;
-		//game.explosion.get();
-		//return true;
-		//}
+		}
 	};
 
 	// the bullet is normally fired at the top px of the enemy
@@ -330,6 +323,7 @@ function Bullet(object) {
 		this.y = y;
 		this.speed = speed;
 		this.alive = true;
+		this.isColliding = false;
 	};
 
 	// clear the rectangle around the bullet in the previous frame
@@ -341,10 +335,10 @@ function Bullet(object) {
 		this.context.clearRect(this.x-1, this.y-1, this.width+2, this.height+2);
 		this.x += this.speed;
 		
-		//if (this.isColliding) {
-		//return true;
-		//} else
-		if (this.x < 0 || this.x > this.canvasWidth-this.width) {
+		if (this.isColliding) {
+			return true;
+
+		} else if (this.x < 0 || this.x > this.canvasWidth-this.width) {
 			return true;
 		
 		} else {
@@ -365,7 +359,7 @@ function Bullet(object) {
 		this.y = 0;
 		this.speed = 0;
 		this.alive = false;
-		// this.isColliding = false;
+		this.isColliding = false;
 	};
 }
 Bullet.prototype = new Drawable();

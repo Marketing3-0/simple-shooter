@@ -44,7 +44,7 @@ module.exports = function(grunt) {
       },
       dist: {
         files: {
-          './dist/js/app.min.js': ['<%= concat.dist.dest %>']
+          './dist/js/app.min.js': ['./source/js/single/*.js']
         }
       }
     },
@@ -106,6 +106,6 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-contrib-watch');
 
-  grunt.registerTask('build', ['sass', 'jshint:gruntfile', 'jshint:scripts', 'concat', 'uglify']);
+  grunt.registerTask('build', ['sass', 'jshint:gruntfile', 'jshint:scripts', 'uglify']);
   grunt.registerTask('default', ['build', 'connect', 'watch']);
 };
