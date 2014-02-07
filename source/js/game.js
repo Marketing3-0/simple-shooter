@@ -84,14 +84,14 @@ function Game() {
 			);
 			this.enemies[1] = new Enemy_A();
 			this.enemies[1].init(
-				370,
+				this.enemiesCanvas.width-100,
 				this.enemiesCanvas.height-imgRepo.enemy_1.height,
 				imgRepo.enemy_1.width,
 				imgRepo.enemy_1.height
 			);
 			this.enemies[2] = new Enemy_B();
 			this.enemies[2].init(
-				600,
+				330,
 				this.enemiesCanvas.height-10,
 				imgRepo.enemy_2.width,
 				imgRepo.enemy_2.height
@@ -116,7 +116,7 @@ function Game() {
 
 			this.obstacles[1] = new Obstacle_A();
 			this.obstacles[1].init(
-				300,
+				470,
 				this.obstaclesCanvas.height - imgRepo.obstacle_1.height,
 				imgRepo.obstacle_1.width,
 				imgRepo.obstacle_1.height
@@ -124,7 +124,7 @@ function Game() {
 
 			this.obstacles[2] = new Obstacle_B();
 			this.obstacles[2].init(
-				this.obstaclesCanvas.width - imgRepo.obstacle_2.width,
+				280,
 				this.obstaclesCanvas.height - imgRepo.obstacle_2.height,
 				imgRepo.obstacle_2.width,
 				imgRepo.obstacle_2.height
@@ -179,13 +179,13 @@ function Game() {
 			imgRepo.enemy_1.height
 		);
 		this.enemies[1].init(
-			370,
+			this.enemiesCanvas.width-100,
 			this.enemiesCanvas.height-imgRepo.enemy_1.height,
 			imgRepo.enemy_1.width,
 			imgRepo.enemy_1.height
 		);
 		this.enemies[2].init(
-			600,
+			330,
 			this.enemiesCanvas.height-10,
 			imgRepo.enemy_2.width,
 			imgRepo.enemy_2.height
@@ -194,21 +194,21 @@ function Game() {
 		this.enemyBulletPool.init(DRAWABLE_TYPES.enemyBullet);
 
 		this.obstacles[0].init(
-				80,
-				this.obstaclesCanvas.height - imgRepo.obstacle_1.height,
-				imgRepo.obstacle_1.width,
-				imgRepo.obstacle_1.height
-			);
+			80,
+			this.obstaclesCanvas.height - imgRepo.obstacle_1.height,
+			imgRepo.obstacle_1.width,
+			imgRepo.obstacle_1.height
+		);
 
 		this.obstacles[1].init(
-			300,
+			470,
 			this.obstaclesCanvas.height - imgRepo.obstacle_1.height,
 			imgRepo.obstacle_1.width,
 			imgRepo.obstacle_1.height
 		);
 
 		this.obstacles[2].init(
-			this.obstaclesCanvas.width - imgRepo.obstacle_2.width,
+			280,
 			this.obstaclesCanvas.height - imgRepo.obstacle_2.height,
 			imgRepo.obstacle_2.width,
 			imgRepo.obstacle_2.height
