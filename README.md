@@ -5,6 +5,8 @@ HTML5 2D Shooter Game
 
 To play it, simply open in the browser the file `dist/index.html`
 
+This little game can be found at: [www.marco-ciampini.com/simple-shooter/](http://www.marco-ciampini.com/simple-shooter/index.html "My personal website")
+
 
 Build instructions:
 -------------------
